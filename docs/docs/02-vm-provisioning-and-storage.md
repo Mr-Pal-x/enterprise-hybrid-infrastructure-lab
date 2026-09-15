@@ -1,29 +1,35 @@
-# Phase 1.2: Virtual Machine Provisioning & Storage Configuration
+# Phase 1.2: Virtual Machine Provisioning, Guest Drivers & Active Directory Promotion
 
-##  Implementation Summary
-Provisioned primary infrastructure Virtual Machines (Windows Server 2022 and Red Hat Enterprise Linux) on Proxmox VE. Implemented enterprise-grade storage driver baselines for Windows guests and RHCSA-aligned manual disk partitioning for RHEL nodes.
+## Implementation Summary
+Provisioned core virtual machines (Windows Server 2022 and Red Hat Enterprise Linux) on Proxmox VE. Resolved storage and network driver dependencies using VirtIO guest media, initialized system identity configurations, and promoted the primary Windows Server node to Root Domain Controller (`DC01`).
 
 ---
 
-## 🪟 Windows Server 2022 Deployment (`DC01`)
+## 🪟 Windows Server 2022 Deployment & Domain Controller Promotion (`DC01`)
 
-### Storage Driver Architecture & VirtIO Integration
-* **Configuration:** Provisioned guest VM using Proxmox SCSI controller (`virtio-scsi-pci`) to maximize storage I/O performance over legacy IDE/SATA emulation.
+### 1. Storage & Network Driver Troubleshooting
+* **Configuration:** Assigned VirtIO SCSI disk controller (`virtio-scsi-pci`) and VirtIO Paravirtualized Network Interface Card (`VirtIO / NetKVM`) for maximum I/O performance and low CPU overhead.
 * **Troubleshooting Log — Missing Storage Target:**
-  * **Issue:** During the Windows Server 2022 installation wizard, no available disk drives were detected on the storage selection screen.
-  * **Root Cause:** Windows Server media lacks native out-of-box drivers for High-Performance VirtIO SCSI disk controllers.
-  * **Resolution Procedure:**
-    1. Mounted the VirtIO ISO (`virtio-win.iso`) as a secondary virtual CD/DVD drive in Proxmox VM hardware settings.
-    2. Selected **Load Driver** within the Windows Setup interface.
-    3. Navigated to the mounted drive: `\vioscsi\2k22\amd64` (VirtIO SCSI driver path for Server 2022).
-    4. Loaded the `vioscsi` driver into memory, instantly exposing the virtual hard disk target for partition creation and OS installation.
+  * **Symptom:** Windows Setup reported "No drives were found" during disk selection.
+  * **Root Cause:** Lack of native out-of-box VirtIO storage drivers in standard Windows Server ISO media.
+  * **Resolution:** Mounted `virtio-win.iso` as a secondary virtual optical drive, selected **Load Driver**, and navigated to `\vioscsi\2k22\amd64` to load the VirtIO SCSI driver.
+* **Troubleshooting Log — No Network Interface Detected:**
+  * **Symptom:** Server booted with no active network connectivity; Device Manager flagged the Ethernet Controller as an unrecognized device.
+  * **Root Cause:** Windows Server 2022 lacks native drivers for Red Hat / VirtIO paravirtualized NIC adapters.
+  * **Resolution:** Opened Device Manager, initiated a driver update for the network interface targeting the mounted VirtIO ISO directory (`\NetKVM\2k22\amd64`), and installed the Red Hat VirtIO Ethernet Adapter driver to restore network stack functionality.
+
+### 2. Base OS Identity & Domain Role Promotion
+* **Hostname Standardization:** Renamed default system name to enterprise standard hostname **`DC01`**.
+* **Role Installation:** Installed **Active Directory Domain Services (AD DS)** and **DNS Server** roles via Server Manager.
+* **Forest Initialization:** Executed Domain Controller promotion wizard to create a new Active Directory forest (`lab.internal` / enterprise root domain).
+* **Directory Services Restore Mode (DSRM):** Configured isolated DSRM administrative credential baseline for emergency directory recovery.
 
 ---
 
 ## 🐧 Enterprise Linux Deployment (RHEL Node)
 
 ### Manual Storage Partitioning (RHCSA-Aligned Baseline)
-Bypassed automatic disk partitioning during RHEL installation to construct a custom storage topology aligned with Enterprise Linux administration baselines:
+Bypassed default automatic partitioning during RHEL installation to construct a custom storage topology aligned with Enterprise Linux administration baselines:
 
 * **`/boot` Partition:** Dedicated boot partition allocated to isolate system bootloaders and kernel images.
 * **`/` (Root Directory):** Base OS installation file system.
@@ -32,6 +38,7 @@ Bypassed automatic disk partitioning during RHEL installation to construct a cus
 
 ---
 
-##  Outcome
-* **Storage Optimization:** Windows Server operating on high-efficiency VirtIO storage drivers with minimal host overhead.
+## Outcomes
+* **Hardware Acceleration:** Windows Server fully operational on high-efficiency VirtIO storage (`vioscsi`) and network (`NetKVM`) paravirtualized drivers.
+* **Identity Core Active:** Domain Controller `DC01` established as the root identity provider and primary DNS authority for the enterprise lab environment.
 * **Linux Hardening:** Custom RHEL storage layout mitigating storage-exhaustion risks and modeling RHCSA file system management standards.

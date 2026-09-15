@@ -4,7 +4,7 @@ Production-modeled enterprise environment showcasing hybrid systems and cloud id
 
 ---
 
-## 🏛️ Target Core Competencies
+## Target Core Competencies
 
 * **Directory Services & Identity Management:** Windows Server 2022 (`DC01`), Active Directory Domain Services (AD DS), Tiered Organizational Units (OUs), Group Policy Objects (GPO), and Role-Based Access Control (RBAC).
 * **Enterprise Linux Administration:** Red Hat Enterprise Linux (RHEL) / AlmaLinux deployment, SSSD/Realm domain integration, and system hardening.
@@ -14,7 +14,7 @@ Production-modeled enterprise environment showcasing hybrid systems and cloud id
 
 ---
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 * **Hypervisor Platform:** Proxmox VE (Bare-metal virtualized infrastructure)
 * **Identity Core:** Windows Server 2022 (`DC01` - Primary Domain Controller)
@@ -25,7 +25,7 @@ Production-modeled enterprise environment showcasing hybrid systems and cloud id
 
 ---
 
-## 📋 Operational Implementation Log
+## Operational Implementation Log
 
 ### Phase 1: Core Directory & Infrastructure Baseline (Current)
 - [x] Bare-metal Proxmox VE deployment & VirtIO driver acceleration

@@ -32,6 +32,6 @@ Bypassed automatic disk partitioning during RHEL installation to construct a cus
 
 ---
 
-## 🔍 Engineering Outcomes
+##  Outcome
 * **Storage Optimization:** Windows Server operating on high-efficiency VirtIO storage drivers with minimal host overhead.
 * **Linux Hardening:** Custom RHEL storage layout mitigating storage-exhaustion risks and modeling RHCSA file system management standards.

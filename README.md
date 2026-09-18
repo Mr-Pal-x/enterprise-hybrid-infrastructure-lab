@@ -31,7 +31,7 @@ Production-modeled enterprise environment showcasing hybrid systems and cloud id
 | Device / VM | Role | Subnet / IP | Management Access |
 | :--- | :--- | :--- | :--- |
 | **OPNsense** | Virtual Gateway / Firewall | `10.0.10.1` | Tailscale / Web GUI |
-| **DC01** | Active Directory / DNS | `10.0.10.x` | Remmina (RDP) / WinRM HTTPS (5986) |
+| **DC01** | Active Directory / DNS | `10.0.10.x` | SSH / Remote Port
 | **RHEL Node** | Ansible Control Node | `10.0.10.x` | SSH / Console |
 
 ---
